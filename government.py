@@ -5,3 +5,4 @@ class Government:
         """
         handle_turn: handle the turn, returning the moves
         """
+        return []
