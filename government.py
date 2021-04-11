@@ -87,6 +87,15 @@ class Government:
 
         average_neutral_ships = self.neutral_ships/len(self.neutral_planets)
 
+    def frontline_handler(self)
+        # Determine frontline
+        
+        # Interpolate surface over enemy planets shipcount (area weighted)
+        # Project shipcount surface to frontline for ship target determination
+        
+        # Interpolate surface over enemy planets planetdensity
+        # Project planetdensity surface to frontline for increment determination
+        
 
 
 
