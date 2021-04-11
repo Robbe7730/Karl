@@ -38,6 +38,13 @@ class TestFutureIterator(unittest.TestCase):
         self.assertEqual(next(iterator), 11)
         self.assertEqual(next(iterator), 12)
         self.assertEqual(next(iterator), 1)
+        self.assertEqual(iterator.distress_count, 38)
+
+        iterator = FutureIterator(1, [
+            make_expedition(1, 5),
+        ], True)
+        self.assertEqual(next(iterator), 1)
+        self.assertEqual(iterator.distress_count, 4)
 
     def test_distress_zero(self):
         iterator = FutureIterator(10, [
