@@ -2,7 +2,6 @@
 planet: contains the Planet class
 """
 
-
 class FutureIterator:
     """
     FutureIterator: iterator for the future of a planet
@@ -25,6 +24,7 @@ class FutureIterator:
 
     def __next__(self):
         self.ship_count += 1
+        self.distress_count = 0
 
         contestants = {}
 
@@ -57,6 +57,7 @@ class FutureIterator:
             new_owner = 0
 
         if self.use_distress and new_owner != 1:
+            self.distress_count = new_ship_count + 1
             new_owner = 1
             new_ship_count = 1
 
@@ -88,6 +89,7 @@ class Planet:
             self.distance_to(x) for x in state["planets"]
         )
         self._inbound_expeditions = []
+        self._turn = 0
 
     def handle_turn(self, state):
         """
@@ -96,6 +98,7 @@ class Planet:
         self._inbound_expeditions = [
             x for x in state["expeditions"] if x["owner"] == 1
         ]
+        self._turn += 1
 
     def get_moves(self) -> list:
         """
@@ -118,6 +121,15 @@ class Planet:
         get_distress: returns the times this planet will go into distress and
         the amount of ships it needs to survive
         """
+        ret = []
+        iterator = self.get_future(True)
+
+        for delta_turn in range(math.ceil(self._distance_to_furthest)):
+            next(iterator)
+            if iterator.distress_count != 0:
+                ret.append((iterator.distress_count, self._turn + delta_turn))
+
+        return ret
 
     def set_target_ship_count(self, num_ships: int, increment: int):
         """
