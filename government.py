@@ -1,18 +1,18 @@
 from planet import Planet
 
 class Government:
-    def __init__(self):
-        pass
-    
-    def handle_turn(state):
+    def __init__(self, state):
+        self.all_planets = {p['name']:Planet(p,state) for p in state['planets']}
+        
+    def handle_turn(self, state):
         """
         handle_turn: handle the turn, returning the moves
         """
 
-        self.all_planets = state['planets']
-        self.my_planets = [p for p in state['planets'] if p['owner'] == 1]
-        self.neutral_planets = [p for p in state['planets'] if p['owner'] == None]
-        self.enemy_planets = [p for p in state['planets'] if p['owner'] == 2]
+        
+        self.my_planets = {p for p in self.all_planets if p.owner == 1}
+        self.neutral_planets = {p for p in self.all_planets if p.owner == None}
+        self.enemy_planets = {p for p in self.all_planets if p.owner == 2}
 
         self.all_expeditions = state['expeditions']
         self.my_expeditions = [e for e in state['expeditions'] if e['owner'] == 1]
@@ -30,4 +30,13 @@ class Government:
         return []
     
     def distress_handler(self):
-        pass
+        distress_list = []
+        for _,p in my_planets:
+            distress_list.append([p.name,p.get_distress()])
+
+    
+if __name__ == '__main__':
+    import json
+    f = open("yeetskeet.json", "r")
+    state = json.loads(f.readline())
+    TestBot = Government(state)
