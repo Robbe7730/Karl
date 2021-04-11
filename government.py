@@ -10,16 +10,16 @@ class Government:
         """
 
         
-        self.my_planets = {p for p in self.all_planets if p.owner == 1}
-        self.neutral_planets = {p for p in self.all_planets if p.owner == None}
-        self.enemy_planets = {p for p in self.all_planets if p.owner == 2}
+        self.my_planets = {k:p for (k,p) in self.all_planets.items() if p.owner == 1}
+        self.neutral_planets = {k:p for (k,p) in self.all_planets.items() if p.owner == None}
+        self.enemy_planets = {k:p for (k,p) in self.all_planets.items() if p.owner == 2}
 
         self.all_expeditions = state['expeditions']
         self.my_expeditions = [e for e in state['expeditions'] if e['owner'] == 1]
         self.enemy_expeditions = [e for e in state['expeditions'] if e['owner'] == 2]
 
-        self.my_available_ships = sum([p['ship_count'] for p in self.my_planets])
-        self.enemy_available_ships = sum([p['ship_count'] for p in self.enemy_planets])
+        self.my_available_ships = sum([p.ship_count for (k,p) in self.my_planets.items()])
+        self.enemy_available_ships = sum([p.ship_count for (k,p) in self.enemy_planets.items()])
 
         self.my_unavailable_ships = sum([p['ship_count'] for p in self.my_expeditions])
         self.enemy_unavailable_ships = sum([p['ship_count'] for p in self.enemy_expeditions])
@@ -31,12 +31,27 @@ class Government:
     
     def distress_handler(self):
         distress_list = []
-        for _,p in my_planets:
-            distress_list.append([p.name,p.get_distress()])
+        for p in self.my_planets.values():
+            for request in p.get_distress():
+                distress_list.append([p.name,request,None])
+        my_planets = list(self.my_planets.values())
+        i = 0
+        lastchanged = 1
+        notoptimal = True
+        while notoptimal:
+            changed, distress_list = my_planets[i].query_distress_call(distress_list)
+            if lastchanged == i:
+                notoptimal = False
+            if changed:
+                lastchanged = i
+            i = (i+1)%len(my_planets)
+        execute_distress_call(distress_list)
 
-    
+
 if __name__ == '__main__':
     import json
     f = open("yeetskeet.json", "r")
     state = json.loads(f.readline())
     TestBot = Government(state)
+    TestBot.handle_turn(state)
+    TestBot.distress_handler()
