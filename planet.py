@@ -2,6 +2,8 @@
 planet: contains the Planet class
 """
 
+import math
+
 class FutureIterator:
     """
     FutureIterator: iterator for the future of a planet
@@ -90,6 +92,8 @@ class Planet:
         )
         self._inbound_expeditions = []
         self._turn = 0
+        self._target_ship_count = 0
+        self._target_ship_count_increase = 0
 
     def handle_turn(self, state):
         """
@@ -99,6 +103,7 @@ class Planet:
             x for x in state["expeditions"] if x["owner"] == 1
         ]
         self._turn += 1
+        self._target_ship_count += self._target_ship_count_increase
 
     def get_moves(self) -> list:
         """
@@ -136,6 +141,8 @@ class Planet:
         set_target_ship_count: set the target number of ships for this planet to
         num_ships, increasing by increment every turn
         """
+        self._target_ship_count = num_ships
+        self._target_ship_count_increase = increment
 
     # ===== DISTRESS CALLS =====
 
