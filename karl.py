@@ -7,8 +7,12 @@ def move(moves):
     print(json.dumps(record))
     sys.stdout.flush()
 
-government = Government()
+state = json.loads(next(sys.stdin))
+
+government = Government(state)
 
 for line in sys.stdin:
-    state = json.loads(line)
     move(government.handle_turn(state))
+    state = json.loads(line)
+
+move(government.handle_turn(state))
